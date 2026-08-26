@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed — Mushaf swipe direction reversed to match Arabic reading order
+- **Reported by a real user.** Swiping right now advances to the next page/ayah and swiping left goes back, instead of the other way around — matching how a printed Mushaf's pages actually turn (right to left, like any Arabic book), rather than the generic left-to-advance convention the feature originally shipped with.
+
 ### Changed — Quran pages: justified text like a printed Mushaf
 - **Reported by a real user, with a reference screenshot from another Quran app.** Mushaf page text (`MushafPage.jsx`) is now `text-align: justify` instead of right-aligned, so wrapped lines reach both edges evenly like a printed Mushaf, matching the reference. On Safari/WebKit (what the reference screenshot's iOS device actually renders with) this already justifies Arabic script properly via CoreText's native kashida (letter-elongation) support, the same technique real Quran apps use. On Chromium/Android, `justify` only stretches inter-word spacing (no kashida support in Blink) — tried `text-justify: inter-character` as a Chromium-specific improvement, but confirmed it's silently ignored by this engine (never lands in the computed style), so it wasn't a real fix and was dropped; true kashida rendering everywhere would need page-specific glyph fonts, already a documented, deliberate limitation (see TODO.md).
 

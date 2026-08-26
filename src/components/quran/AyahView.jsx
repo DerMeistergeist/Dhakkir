@@ -25,12 +25,14 @@ export default function AyahView({ lang, sura, ayah, text, surahs, pageOfAyah, o
   var next = nextAyah(surahs, sura, ayah);
   var prev = prevAyah(surahs, sura, ayah);
 
+  // Same right-to-left reading convention as the Mushaf page view: swipe
+  // right advances to the next ayah, swipe left goes back.
   var swipeHandlers = useSwipe(
     function () {
-      if (next) onNavigate(next);
+      if (prev) onNavigate(prev);
     },
     function () {
-      if (prev) onNavigate(prev);
+      if (next) onNavigate(next);
     }
   );
 
