@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed — Adhkar reminders now follow real prayer times
+- Morning/Evening/Sleep/Waking-up adhkar reminders (`src/data/categories.js`'s new `timeAnchor` field) now fire at the real, location-based Sunrise/Asr/Isha/Fajr times when the user has granted location access, instead of always using the fixed default clock times (05:00/17:00/21:00/06:00) regardless of season or where the user actually is. Falls back to the fixed times gracefully when location isn't available. Settings now explains which mode is active. Data-integrity test added confirming the anchors are valid and every anchored category still has a fixed fallback.
+
 ### Added — Quran (Mushaf)
 - **A full Quran reading section**, restoring the "و القرآن الكريم" the original app's manifest advertised but whose source code was never actually present in this repository (confirmed by inspecting the previously-tracked `.aab`: it's a thin TWA wrapper around a hosted URL, containing no Quran code itself). New `src/data/quran/` (`pages.js`, `text.js`, `surahs.js`) built from two open-data npm packages via `scripts/build-quran-data.js`:
   - Real Mushaf-page browsing (604 pages, matching the King Fahd Complex Madani Mushaf layout used in most printed copies) with prev/next navigation and a "go to page" jumper.
