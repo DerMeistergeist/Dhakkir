@@ -7,6 +7,7 @@ import { computePrayerTimes } from "./prayerTimes";
 // calendar day regardless of the test runner's own time zone.
 var CAIRO = { latitude: 30.0444, longitude: 31.2357 };
 var MECCA = { latitude: 21.4225, longitude: 39.8262 };
+var BERLIN = { latitude: 52.52, longitude: 13.405 };
 
 var JUNE_SOLSTICE = new Date(2024, 5, 15);
 var MARCH_EQUINOX = new Date(2024, 2, 20);
@@ -78,5 +79,23 @@ describe("computePrayerTimes", () => {
     var opts = { latitude: 78, longitude: 15, date: JUNE_SOLSTICE, method: "MWL" };
     expect(() => computePrayerTimes(opts)).not.toThrow();
     expect(computePrayerTimes(opts).approximate).toBe(true);
+  });
+
+  test("Fajr still lands before Sunrise even in the approximate high-latitude fallback", () => {
+    // Regression test: a real user at a real, populated mid-latitude city
+    // (Berlin, ~52.5°N) hit this in production. Near the June solstice with
+    // MWL's 18° Fajr angle, the sun never gets that far below the horizon
+    // this far north, so the fallback path kicks in -- and it previously
+    // computed Fajr *after* Sunrise (the fallback offset's sign was
+    // backwards: `sunriseH - 1.5` instead of `sunriseH + 1.5`, and because
+    // fajr = dhuhrUTC - fajrH, a smaller fajrH means a *later* clock time).
+    var times = computePrayerTimes(Object.assign({ date: JUNE_SOLSTICE, method: "MWL" }, BERLIN));
+    expect(times.approximate).toBe(true); // confirms this test actually exercises the fallback
+    // Full chronological order should still hold end to end.
+    expect(times.fajr.getTime()).toBeLessThan(times.sunrise.getTime());
+    expect(times.sunrise.getTime()).toBeLessThan(times.dhuhr.getTime());
+    expect(times.dhuhr.getTime()).toBeLessThan(times.asr.getTime());
+    expect(times.asr.getTime()).toBeLessThan(times.maghrib.getTime());
+    expect(times.maghrib.getTime()).toBeLessThan(times.isha.getTime());
   });
 });

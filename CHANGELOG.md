@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixed — Fajr computed after Sunrise at real, populated latitudes
+- **Reported by a real user:** Fajr was showing later than Sunrise. Root cause: in `computePrayerTimes`'s high-latitude fallback (used whenever the sun doesn't reach the configured Fajr angle below the horizon that day — which happens every summer at roughly 49-50°N and above with MWL's 18°, covering much of Canada, Germany, the Netherlands, Poland, and similar latitudes, not just the Arctic), the fallback offset's sign was backwards: `fajrH = sunriseH - 1.5` instead of `sunriseH + 1.5`. Because `fajr = dhuhrUTC - fajrH`, a *smaller* fajrH produces a *later* clock time — so the fallback placed Fajr 1.5h *after* sunrise instead of 1.5h before it. Fixed, and a regression test added (Berlin, June solstice, MWL) that reproduces the fallback path and asserts full chronological ordering — confirmed this test fails on the old code and passes on the fix.
+
 ### Changed — Adhkar reminders now follow real prayer times
 - Morning/Evening/Sleep/Waking-up adhkar reminders (`src/data/categories.js`'s new `timeAnchor` field) now fire at the real, location-based Sunrise/Asr/Isha/Fajr times when the user has granted location access, instead of always using the fixed default clock times (05:00/17:00/21:00/06:00) regardless of season or where the user actually is. Falls back to the fixed times gracefully when location isn't available. Settings now explains which mode is active. Data-integrity test added confirming the anchors are valid and every anchored category still has a fixed fallback.
 

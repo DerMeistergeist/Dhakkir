@@ -179,7 +179,11 @@ export function computePrayerTimes(opts) {
   // all. This trades precision for availability; see README for the
   // limitation.
   sunriseH = sunriseH != null ? sunriseH : 6;
-  fajrH = fajrH != null ? fajrH : sunriseH - 1.5;
+  // Note: fajr = dhuhrUTC - fajrH, so a *larger* hour-angle-from-noon
+  // means an *earlier* clock time. To place the Fajr fallback 1.5h
+  // before sunrise we need sunriseH + 1.5, not - 1.5 (which would put
+  // it 1.5h *after* sunrise -- caught via a real user report).
+  fajrH = fajrH != null ? fajrH : sunriseH + 1.5;
   asrH = asrH != null ? asrH : 3;
 
   var maghribUTC = dhuhrUTC + sunriseH;
