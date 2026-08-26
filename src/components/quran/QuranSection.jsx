@@ -4,10 +4,14 @@ import useQuranData from "../../hooks/useQuranData";
 import SurahIndex from "./SurahIndex";
 import MushafPage from "./MushafPage";
 import QuranSearchView from "./QuranSearchView";
+import AyahView from "./AyahView";
 
-export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettings }) {
+export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettings, onFullscreenChange }) {
   const [view, setView] = useState("index");
   const [currentPage, setCurrentPage] = useState(lastPage || 1);
+  const [currentAyah, setCurrentAyah] = useState(null); // {sura, ayah}
+  const [highlightAyah, setHighlightAyah] = useState(null); // ayah to highlight when opening a page from search/ayah view
+  const [searchQuery, setSearchQuery] = useState("");
 
   var data = useQuranData();
 
@@ -19,10 +23,16 @@ export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettin
     );
   }
 
-  function openPage(pageNumber) {
+  function openPage(pageNumber, highlight) {
     setCurrentPage(pageNumber);
     setLastPage(pageNumber);
+    setHighlightAyah(highlight || null);
     setView("page");
+  }
+
+  function openAyah(pointer) {
+    setCurrentAyah(pointer);
+    setView("ayah");
   }
 
   if (view === "search") {
@@ -32,9 +42,31 @@ export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettin
         text={data.TEXT}
         surahs={data.SURAHS}
         pageOfAyah={data.pageOfAyah}
-        onSelectResult={openPage}
+        query={searchQuery}
+        onQueryChange={setSearchQuery}
+        onSelectResult={openAyah}
         onBack={function () {
           setView("index");
+        }}
+      />
+    );
+  }
+
+  if (view === "ayah" && currentAyah) {
+    return (
+      <AyahView
+        lang={lang}
+        sura={currentAyah.sura}
+        ayah={currentAyah.ayah}
+        text={data.TEXT}
+        surahs={data.SURAHS}
+        pageOfAyah={data.pageOfAyah}
+        onNavigate={openAyah}
+        onViewInPage={function (pageNumber) {
+          openPage(pageNumber, currentAyah);
+        }}
+        onBack={function () {
+          setView("search");
         }}
       />
     );
@@ -49,6 +81,8 @@ export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettin
         ayahs={data.PAGES[currentPage - 1]}
         text={data.TEXT}
         surahs={data.SURAHS}
+        highlightAyah={highlightAyah}
+        onFullscreenChange={onFullscreenChange}
         onPrev={function () {
           if (currentPage > 1) openPage(currentPage - 1);
         }}

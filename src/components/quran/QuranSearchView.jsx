@@ -1,12 +1,13 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { GOLD, headerStyle, screenStyle, t } from "../../theme";
 import { normalizeArabic, toEasternDigits } from "../../utils/arabic";
 
 var MAX_RESULTS = 50;
 
-export default function QuranSearchView({ lang, text, surahs, pageOfAyah, onSelectResult, onBack }) {
-  const [query, setQuery] = useState("");
-
+// `query`/`onQueryChange` are lifted to QuranSection (rather than local
+// state) so the typed search text survives a round-trip through the ayah
+// view -- tapping a result then going back no longer clears what was typed.
+export default function QuranSearchView({ lang, text, surahs, pageOfAyah, query, onQueryChange, onSelectResult, onBack }) {
   var results = useMemo(function () {
     var needle = normalizeArabic(query.trim());
     if (needle.length < 2) return [];
@@ -39,7 +40,7 @@ export default function QuranSearchView({ lang, text, surahs, pageOfAyah, onSele
           type="text"
           value={query}
           onChange={function (e) {
-            setQuery(e.target.value);
+            onQueryChange(e.target.value);
           }}
           placeholder={t(lang, "اكتب كلمة أو جزء من آية...", "Type a word or part of an ayah...", "Wort oder Ayah-Teil eingeben...")}
           style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid rgba(139,105,20,0.3)", fontSize: 16, fontFamily: "Amiri,serif", direction: "rtl", textAlign: "right" }}
@@ -61,8 +62,9 @@ export default function QuranSearchView({ lang, text, surahs, pageOfAyah, onSele
           return (
             <button
               key={r.sura + "-" + r.ayah}
+              data-testid="quran-search-result"
               onClick={function () {
-                onSelectResult(page);
+                onSelectResult({ sura: r.sura, ayah: r.ayah });
               }}
               style={{ width: "100%", textAlign: "right", background: "rgba(255,252,245,0.9)", border: "1px solid rgba(201,168,76,0.12)", borderRadius: 14, padding: "14px 16px", marginBottom: 8, cursor: "pointer" }}
             >
