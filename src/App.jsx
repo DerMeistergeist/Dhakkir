@@ -20,6 +20,7 @@ export default function App() {
   const [done, setDone] = useLocalStorage("dhakkir.done", {});
   const [calcMethod, setCalcMethod] = useLocalStorage("dhakkir.calcMethod", DEFAULT_METHOD);
   const [asrMadhab, setAsrMadhab] = useLocalStorage("dhakkir.asrMadhab", "STANDARD");
+  const [lastQuranPage, setLastQuranPage] = useLocalStorage("dhakkir.lastQuranPage", null);
 
   const geolocation = useGeolocation();
   const { times: prayerTimes, next: nextPrayer, now: prayerNow } = usePrayerTimes(geolocation.coords, calcMethod, asrMadhab);
@@ -227,6 +228,7 @@ export default function App() {
           }}
           hadithsProps={hadithsProps}
           prayerTimesProps={{ geolocation: geolocation, method: calcMethod, times: prayerTimes, next: nextPrayer, now: prayerNow }}
+          quranProps={{ lastPage: lastQuranPage, setLastPage: setLastQuranPage, onOpenSettings: function () { setShowSet(true); } }}
         />
       )}
     </div>
