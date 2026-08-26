@@ -1,7 +1,8 @@
 import React from "react";
 import { GOLD, PATTERN_BG, t } from "../theme";
+import { CALC_METHODS, ASR_MADHABS } from "../utils/prayerTimes";
 
-export default function Settings({ lang, setLang, showTr, setShowTr, remindersOn, setRemindersOn, onBack }) {
+export default function Settings({ lang, setLang, showTr, setShowTr, remindersOn, setRemindersOn, calcMethod, setCalcMethod, asrMadhab, setAsrMadhab, geolocation, onBack }) {
   var notificationsSupported = typeof window !== "undefined" && "Notification" in window;
 
   var toggles = [
@@ -82,6 +83,73 @@ export default function Settings({ lang, setLang, showTr, setShowTr, remindersOn
             )}
           </div>
         )}
+
+        <div style={{ fontSize: 11, color: "#9a8878", letterSpacing: 1, margin: "28px 0 10px" }}>{t(lang, "مواعيد الصلاة", "PRAYER TIMES", "GEBETSZEITEN")}</div>
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 13, color: "#2c1810", marginBottom: 6 }}>{t(lang, "طريقة الحساب", "Calculation Method", "Berechnungsmethode")}</div>
+          <select
+            value={calcMethod}
+            onChange={function (e) {
+              setCalcMethod(e.target.value);
+            }}
+            style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1px solid rgba(139,105,20,0.25)", background: "rgba(139,105,20,0.06)", color: "#2c1810", fontSize: 13 }}
+          >
+            {Object.keys(CALC_METHODS).map(function (key) {
+              return (
+                <option key={key} value={key}>
+                  {t(lang, CALC_METHODS[key].label.ar, CALC_METHODS[key].label.en, CALC_METHODS[key].label.de)}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 13, color: "#2c1810", marginBottom: 6 }}>{t(lang, "مذهب العصر", "Asr Calculation", "Asr-Berechnung")}</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {Object.keys(ASR_MADHABS).map(function (key) {
+              return (
+                <button
+                  key={key}
+                  onClick={function () {
+                    setAsrMadhab(key);
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: "9px 4px",
+                    background: asrMadhab === key ? "rgba(139,105,20,0.25)" : "rgba(139,105,20,0.06)",
+                    border: "1px solid " + (asrMadhab === key ? "rgba(139,105,20,0.5)" : "rgba(139,105,20,0.1)"),
+                    borderRadius: 10,
+                    color: asrMadhab === key ? GOLD : "#9a8878",
+                    cursor: "pointer",
+                    fontSize: 12,
+                  }}
+                >
+                  {t(lang, ASR_MADHABS[key].label.ar, ASR_MADHABS[key].label.en, ASR_MADHABS[key].label.de)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 13, color: "#2c1810", marginBottom: 6 }}>{t(lang, "الموقع الجغرافي", "Location", "Standort")}</div>
+          {geolocation.coords ? (
+            <div style={{ fontSize: 12, color: "#9a8878", marginBottom: 8, direction: "ltr", unicodeBidi: "isolate", textAlign: lang === "ar" ? "right" : "left" }}>
+              {geolocation.coords.latitude.toFixed(3)}, {geolocation.coords.longitude.toFixed(3)}
+            </div>
+          ) : (
+            <div style={{ fontSize: 12, color: "#9a8878", marginBottom: 8 }}>{t(lang, "لم يتم تحديد الموقع بعد.", "Location not set yet.", "Standort noch nicht festgelegt.")}</div>
+          )}
+          <button
+            onClick={geolocation.request}
+            disabled={geolocation.status === "locating"}
+            style={{ background: "rgba(139,105,20,0.12)", border: "1px solid rgba(139,105,20,0.25)", color: GOLD, borderRadius: 10, padding: "8px 16px", cursor: "pointer", fontSize: 12 }}
+          >
+            {geolocation.coords ? t(lang, "تحديث الموقع", "Refresh Location", "Standort aktualisieren") : t(lang, "تفعيل الموقع", "Enable Location", "Standort aktivieren")}
+          </button>
+        </div>
       </div>
     </div>
   );

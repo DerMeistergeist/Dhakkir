@@ -3,8 +3,9 @@ import { SECTIONS } from "../data";
 import { GOLD, screenStyle, t } from "../theme";
 import AdhkarGrid from "./AdhkarGrid";
 import HadithsSection from "./HadithsSection";
+import PrayerTimes from "./PrayerTimes";
 
-export default function HomeView({ lang, setLang, section, setSection, done, onOpenSettings, onSelectAdhkarCategory, hadithsProps }) {
+export default function HomeView({ lang, setLang, section, setSection, done, onOpenSettings, onSelectAdhkarCategory, hadithsProps, prayerTimesProps }) {
   return (
     <div style={Object.assign({}, screenStyle, { paddingBottom: 80 })}>
       <div style={{ padding: "12px 16px", background: "rgba(250,247,240,0.98)", borderBottom: "1px solid rgba(139,105,20,0.25)", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, overflow: "hidden" }}>
@@ -42,11 +43,11 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
                 borderRadius: 12,
                 cursor: "pointer",
                 color: section === s.id ? GOLD : "#9a8878",
-                fontSize: 13,
+                fontSize: 12,
                 fontFamily: lang === "ar" ? "Amiri,serif" : "Arial,sans-serif",
               }}
             >
-              {lang === "ar" ? s.ar : s.en}
+              {t(lang, s.ar, s.en, s.de)}
             </button>
           );
         })}
@@ -68,13 +69,13 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
         })}
       </div>
 
-      {section === "hadiths" ? (
+      {section === "hadiths" && (
         <div style={{ padding: "0 16px" }}>
           <HadithsSection lang={lang} {...hadithsProps} />
         </div>
-      ) : (
-        <AdhkarGrid lang={lang} done={done} onSelectCategory={onSelectAdhkarCategory} />
       )}
+      {section === "prayertimes" && <PrayerTimes lang={lang} {...prayerTimesProps} />}
+      {section === "adhkar" && <AdhkarGrid lang={lang} done={done} onSelectCategory={onSelectAdhkarCategory} />}
     </div>
   );
 }

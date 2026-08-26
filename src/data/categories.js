@@ -1,8 +1,9 @@
 // -- SECTION / CATEGORY METADATA --------------------
 
 export var SECTIONS = [
-  {id:"adhkar",  ar:"الاذكار والادعية", en:"Adhkar & Duaa",    icon:"P"},
-  {id:"hadiths", ar:"الاحاديث النبوية",  en:"Hadiths",          icon:"H"},
+  {id:"adhkar",  ar:"الاذكار والادعية", en:"Adhkar & Duaa",    de:"Adhkar & Bittgebete", icon:"P"},
+  {id:"hadiths", ar:"الاحاديث النبوية",  en:"Hadiths",          de:"Hadithe",             icon:"H"},
+  {id:"prayertimes", ar:"مواعيد الصلاة", en:"Prayer Times",    de:"Gebetszeiten",        icon:"T"},
 ];
 
 export var HADITH_CATS = [

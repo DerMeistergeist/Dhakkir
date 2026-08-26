@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { CATEGORIES, ADHKAR } from "./data";
+import { DEFAULT_METHOD } from "./utils/prayerTimes";
 import useLocalStorage from "./hooks/useLocalStorage";
 import useReminders from "./hooks/useReminders";
+import useGeolocation from "./hooks/useGeolocation";
+import usePrayerTimes from "./hooks/usePrayerTimes";
 import Splash from "./components/Splash";
 import Settings from "./components/Settings";
 import HomeView from "./components/HomeView";
@@ -15,6 +18,11 @@ export default function App() {
   const [remindersOn, setRemindersOn] = useLocalStorage("dhakkir.remindersOn", false);
   const [counts, setCounts] = useLocalStorage("dhakkir.counts", {});
   const [done, setDone] = useLocalStorage("dhakkir.done", {});
+  const [calcMethod, setCalcMethod] = useLocalStorage("dhakkir.calcMethod", DEFAULT_METHOD);
+  const [asrMadhab, setAsrMadhab] = useLocalStorage("dhakkir.asrMadhab", "STANDARD");
+
+  const geolocation = useGeolocation();
+  const { times: prayerTimes, next: nextPrayer, now: prayerNow } = usePrayerTimes(geolocation.coords, calcMethod, asrMadhab);
 
   // Session-only navigation state.
   const [section, setSection] = useState("adhkar");
@@ -28,7 +36,7 @@ export default function App() {
   const [splash, setSplash] = useState(true);
   const [fade, setFade] = useState(false);
 
-  useReminders(remindersOn, lang);
+  useReminders(remindersOn, lang, prayerTimes);
 
   useEffect(function () {
     var t1 = setTimeout(function () {
@@ -137,6 +145,11 @@ export default function App() {
           setShowTr={setShowTr}
           remindersOn={remindersOn}
           setRemindersOn={setRemindersOn}
+          calcMethod={calcMethod}
+          setCalcMethod={setCalcMethod}
+          asrMadhab={asrMadhab}
+          setAsrMadhab={setAsrMadhab}
+          geolocation={geolocation}
           onBack={function () {
             setShowSet(false);
           }}
@@ -213,6 +226,7 @@ export default function App() {
             setView("category");
           }}
           hadithsProps={hadithsProps}
+          prayerTimesProps={{ geolocation: geolocation, method: calcMethod, times: prayerTimes, next: nextPrayer, now: prayerNow }}
         />
       )}
     </div>

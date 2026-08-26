@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { CATEGORIES } from "../data/categories";
+import { PRAYER_ORDER, PRAYER_LABELS } from "../utils/prayerTimes";
 
 var STORAGE_KEY = "dhakkir.remindersFiredAt";
 
@@ -25,11 +26,13 @@ function saveFired(map) {
 }
 
 // Best-effort local reminders for adhkar categories that carry a suggested
-// `time` (see src/data/categories.js). Limitation: this only fires while
-// the app tab is open in the foreground — it is not a background push
-// notification. A real background reminder needs a Service Worker + Push
-// subscription with a backend, which is out of scope for this static SPA.
-export default function useReminders(enabled, lang) {
+// `time` (see src/data/categories.js), plus the day's Adhan times when
+// `prayerTimes` (from usePrayerTimes) is available. Limitation: this only
+// fires while the app tab is open in the foreground — it is not a
+// background push notification. A real background reminder needs a
+// Service Worker + Push subscription with a backend, which is out of
+// scope for this static SPA.
+export default function useReminders(enabled, lang, prayerTimes) {
   var firedRef = useRef(loadFired());
 
   useEffect(function () {
@@ -44,27 +47,45 @@ export default function useReminders(enabled, lang) {
     if (!enabled) return;
     if (typeof Notification === "undefined") return;
 
+    function notify(id, title, body) {
+      var today = todayKey();
+      if (firedRef.current[id] === today) return;
+      firedRef.current[id] = today;
+      saveFired(firedRef.current);
+      try {
+        new Notification(title, { body: body, tag: "dhakkir-" + id });
+      } catch (e) {
+        // Notification constructor can throw on some platforms (e.g. iOS
+        // Safari); reminders are best-effort so we just skip silently.
+      }
+    }
+
     function tick() {
       if (Notification.permission !== "granted") return;
       var now = new Date();
-      var hh = String(now.getHours()).padStart(2, "0");
-      var mm = String(now.getMinutes()).padStart(2, "0");
-      var current = hh + ":" + mm;
-      var today = todayKey();
+      var current = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
 
       CATEGORIES.forEach(function (cat) {
         if (!cat.time || cat.time !== current) return;
-        if (firedRef.current[cat.id] === today) return;
-        firedRef.current[cat.id] = today;
-        saveFired(firedRef.current);
-        try {
-          var title = lang === "ar" ? cat.ar : lang === "de" ? cat.de || cat.en : cat.en;
-          new Notification("ذكّر", { body: title, tag: "dhakkir-" + cat.id });
-        } catch (e) {
-          // Notification constructor can throw on some platforms (e.g. iOS
-          // Safari); reminders are best-effort so we just skip silently.
-        }
+        var title = lang === "ar" ? cat.ar : lang === "de" ? cat.de || cat.en : cat.en;
+        notify(cat.id, "ذكّر", title);
       });
+
+      if (prayerTimes) {
+        PRAYER_ORDER.forEach(function (key) {
+          if (key === "sunrise") return; // not a prayer
+          var pTime = prayerTimes[key];
+          if (!pTime) return;
+          var pCurrent = String(pTime.getHours()).padStart(2, "0") + ":" + String(pTime.getMinutes()).padStart(2, "0");
+          if (pCurrent !== current) return;
+          var name = PRAYER_LABELS[key][lang] || PRAYER_LABELS[key].en;
+          notify(
+            "prayer-" + key,
+            "ذكّر",
+            lang === "ar" ? "حان الآن وقت صلاة " + name : lang === "de" ? "Zeit für das " + name + "-Gebet" : "It's time for " + name + " prayer"
+          );
+        });
+      }
     }
 
     tick();
@@ -72,5 +93,5 @@ export default function useReminders(enabled, lang) {
     return function () {
       clearInterval(id);
     };
-  }, [enabled, lang]);
+  }, [enabled, lang, prayerTimes]);
 }
