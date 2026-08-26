@@ -37,12 +37,16 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Reversed from the generic left=forward/right=back convention: a
+  // printed Mushaf's pages turn right-to-left (page order runs from right
+  // toward the left, like any Arabic book), so swiping right advances to
+  // the next page and swiping left goes back.
   var swipeHandlers = useSwipe(
     function () {
-      onNext();
+      onPrev();
     },
     function () {
-      onPrev();
+      onNext();
     }
   );
 
