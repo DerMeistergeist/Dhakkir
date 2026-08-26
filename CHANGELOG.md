@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-### Changed — Splash screen now matches the app's actual logo
-- **Reported by the app owner, with the real logo as a reference image.** The splash screen previously showed a small star icon sitting *above* "ذكّر" as a separate element. Redrawn so the app's own 16-point rosette (the same shape already used for the app icon, the tap counter, and every `OrnateCard` corner — reused rather than inventing a new star, for visual consistency) sits as a soft, blurred glow directly *behind* the word, with the word centered exactly on top of it via a flex-centered absolute overlay — matching the reference logo's composition.
+### Changed — Home screen header logo now matches the app's actual logo
+- **Reported by the app owner, with the real logo as a reference image.** Clarified after an initial miss: the intended target was the small logo at the top of the *home screen* (not the splash screen, which is back to how it looked before). The app's own 16-point rosette (the same shape already used for the app icon, the tap counter, and every `OrnateCard` corner — reused rather than inventing a new star, for visual consistency) now sits as a soft, blurred glow directly *behind* "ذكّر"/"DHAKKIR" in the home header, with the wordmark centered exactly on top of it — matching the reference logo's composition. Previously this header had a faint, barely-visible star centered on the whole header row (including the settings button), not on the word itself.
 
 ### Added — Quran (Mushaf): fullscreen reading mode and swipe navigation
 - **Fullscreen/immersive mode**, aimed at readers with weak eyesight: a new button on the Mushaf page hides all of the app's surrounding chrome (its own header/page-jumper, and the app's outer logo header, section tabs and language switcher) down to just the page text and a minimal exit/font-size control bar, plus **adjustable text size** (persisted across visits) that can scale the Quran text up to roughly double its normal size.
