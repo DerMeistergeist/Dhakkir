@@ -17,19 +17,29 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
     <div style={Object.assign({}, screenStyle, { paddingBottom: quranImmersive ? 0 : 80 })}>
       {!quranImmersive && (
         <>
-          <div style={{ padding: "12px 16px", background: "rgba(250,247,240,0.98)", borderBottom: "1px solid rgba(139,105,20,0.25)", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, overflow: "hidden" }}>
-            <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", opacity: 0.06 }} aria-hidden="true">
-              <svg width="80" height="80" viewBox="0 0 120 120">
-                <g fill={GOLD} transform="translate(60,60)">
-                  <polygon points="0,-50 11,-22 40,-31 22,-8 40,12 11,8 0,35 -11,8 -40,12 -22,-8 -40,-31 -11,-22" />
-                  <polygon points="0,-50 11,-22 40,-31 22,-8 40,12 11,8 0,35 -11,8 -40,12 -22,-8 -40,-31 -11,-22" transform="rotate(22.5)" />
-                </g>
-              </svg>
-            </div>
+          <div style={{ padding: "12px 16px", background: "rgba(250,247,240,0.98)", borderBottom: "1px solid rgba(139,105,20,0.25)", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
             <div style={{ width: 36 }} />
-            <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: GOLD, fontFamily: "Amiri,serif" }}>ذكّر</div>
-              <div style={{ fontSize: 10, color: "#9a8878", letterSpacing: 2 }}>DHAKKIR</div>
+            {/* The star sits directly behind the wordmark (not centered on
+                the whole header row) so it lines up with "ذكّر" exactly,
+                the same treatment as the splash screen's logo -- same
+                16-point rosette shape used app-wide (app icon, tap
+                counter, OrnateCard corners), as a soft blurred glow. */}
+            <div style={{ position: "relative", width: 110, height: 66, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="110" height="110" viewBox="0 0 110 110" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)" }} aria-hidden="true">
+                <filter id="homeLogoGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="4" />
+                </filter>
+                <polygon
+                  transform="translate(55,55) scale(0.62)"
+                  fill="#e7dbc3"
+                  filter="url(#homeLogoGlow)"
+                  points="0.0,-77.8 22.8,-55.0 55.0,-55.0 55.0,-22.8 77.8,0.0 55.0,22.8 55.0,55.0 22.8,55.0 0.0,77.8 -22.8,55.0 -55.0,55.0 -55.0,22.8 -77.8,0.0 -55.0,-22.8 -55.0,-55.0 -22.8,-55.0"
+                />
+              </svg>
+              <div style={{ position: "relative", zIndex: 1, textAlign: "center" }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: GOLD, fontFamily: "Amiri,serif" }}>ذكّر</div>
+                <div style={{ fontSize: 10, color: "#9a8878", letterSpacing: 2 }}>DHAKKIR</div>
+              </div>
             </div>
             <button aria-label={t(lang, "الاعدادات", "Settings", "Einstellungen")} style={{ background: "none", border: "none", color: "#9a8878", fontSize: 16, cursor: "pointer" }} onClick={onOpenSettings}>
               {"⚙"}
