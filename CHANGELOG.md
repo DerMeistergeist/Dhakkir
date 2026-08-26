@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Changed — Splash screen now matches the app's actual logo
+- **Reported by the app owner, with the real logo as a reference image.** The splash screen previously showed a small star icon sitting *above* "ذكّر" as a separate element. Redrawn so the app's own 16-point rosette (the same shape already used for the app icon, the tap counter, and every `OrnateCard` corner — reused rather than inventing a new star, for visual consistency) sits as a soft, blurred glow directly *behind* the word, with the word centered exactly on top of it via a flex-centered absolute overlay — matching the reference logo's composition.
+
+### Added — Quran (Mushaf): fullscreen reading mode and swipe navigation
+- **Fullscreen/immersive mode**, aimed at readers with weak eyesight: a new button on the Mushaf page hides all of the app's surrounding chrome (its own header/page-jumper, and the app's outer logo header, section tabs and language switcher) down to just the page text and a minimal exit/font-size control bar, plus **adjustable text size** (persisted across visits) that can scale the Quran text up to roughly double its normal size.
+- **Swipe left/right to turn the page** (`src/hooks/useSwipe.js`), in addition to the existing prev/next buttons, in both the normal and fullscreen reading modes.
+
+### Added — Quran search now opens an isolated ayah view
+- Tapping a search result no longer jumps straight into the middle of a Mushaf page. It now opens a new **single-ayah view** showing just that ayah, with **previous/next-ayah navigation** (walking sequentially across surah boundaries, swipe-enabled the same as the Mushaf reader) and a button to **view the same ayah within its real Mushaf page**, where it's now visually highlighted so it's easy to find on the page. The search box's typed query is preserved when navigating back from the ayah view instead of being cleared.
+
 ### Fixed — Fajr computed after Sunrise at real, populated latitudes
 - **Reported by a real user:** Fajr was showing later than Sunrise. Root cause: in `computePrayerTimes`'s high-latitude fallback (used whenever the sun doesn't reach the configured Fajr angle below the horizon that day — which happens every summer at roughly 49-50°N and above with MWL's 18°, covering much of Canada, Germany, the Netherlands, Poland, and similar latitudes, not just the Arctic), the fallback offset's sign was backwards: `fajrH = sunriseH - 1.5` instead of `sunriseH + 1.5`. Because `fajr = dhuhrUTC - fajrH`, a *smaller* fajrH produces a *later* clock time — so the fallback placed Fajr 1.5h *after* sunrise instead of 1.5h before it. Fixed, and a regression test added (Berlin, June solstice, MWL) that reproduces the fallback path and asserts full chronological ordering — confirmed this test fails on the old code and passes on the fix.
 
