@@ -30,9 +30,39 @@ export default function PrayerTimes({ lang, geolocation, method, times, next, no
           <div style={{ fontSize: 12, color: "#a03a2c", marginTop: 14, lineHeight: 1.6 }}>
             {t(
               lang,
-              "تم رفض إذن الموقع. فعّله من إعدادات المتصفح لهذا الموقع ثم أعد المحاولة.",
-              "Location permission was denied. Enable it in your browser's site settings, then try again.",
-              "Der Standortzugriff wurde verweigert. Aktiviere ihn in den Browsereinstellungen und versuche es erneut."
+              "تم رفض إذن الموقع. تأكد إن خدمة الموقع (Location Services) مفعّلة لجهازك من الإعدادات العامة، وإن إذن الموقع لهذا المتصفح مسموح (من إعدادات الخصوصية بالجهاز، أو من إعدادات الموقع بجانب شريط العنوان)، ثم أعد المحاولة.",
+              "Location permission was denied. Make sure Location Services is turned on for your device, and that this browser is allowed to use your location (in the device's privacy settings, or the site settings next to the address bar), then try again.",
+              "Der Standortzugriff wurde verweigert. Stelle sicher, dass Standortdienste auf deinem Gerät aktiviert sind und dieser Browser Zugriff hat, dann versuche es erneut."
+            )}
+          </div>
+        )}
+        {status === "timeout" && (
+          <div style={{ fontSize: 12, color: "#a03a2c", marginTop: 14, lineHeight: 1.6 }}>
+            {t(
+              lang,
+              "استغرق تحديد الموقع وقتًا طويلًا (قد يكون بسبب إشارة GPS ضعيفة). حاول مرة أخرى، ويفضّل في مكان مفتوح.",
+              "Locating you took too long (often a weak GPS signal). Please try again, ideally somewhere with a clearer view of the sky.",
+              "Die Standortermittlung hat zu lange gedauert. Bitte versuche es erneut."
+            )}
+          </div>
+        )}
+        {status === "unavailable" && (
+          <div style={{ fontSize: 12, color: "#a03a2c", marginTop: 14, lineHeight: 1.6 }}>
+            {t(
+              lang,
+              "تعذّر تحديد موقعك حاليًا. تأكد إن خدمة الموقع مفعّلة على جهازك ثم حاول مرة أخرى.",
+              "Your location couldn't be determined right now. Make sure Location Services is enabled on your device, then try again.",
+              "Dein Standort konnte gerade nicht ermittelt werden. Bitte versuche es erneut."
+            )}
+          </div>
+        )}
+        {status === "insecure" && (
+          <div style={{ fontSize: 12, color: "#a03a2c", marginTop: 14, lineHeight: 1.6 }}>
+            {t(
+              lang,
+              "تحديد الموقع يعمل فقط عبر اتصال آمن (https). تأكد إنك فاتح الموقع بـ https:// وليس http://.",
+              "Location only works over a secure (https) connection. Make sure you're on the https:// version of the site.",
+              "Standortbestimmung funktioniert nur über eine sichere (https) Verbindung."
             )}
           </div>
         )}
