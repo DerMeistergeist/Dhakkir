@@ -2,6 +2,7 @@
 
 export var SECTIONS = [
   {id:"adhkar",  ar:"الاذكار والادعية", en:"Adhkar & Duaa",    de:"Adhkar & Bittgebete", icon:"P"},
+  {id:"quran",   ar:"القرآن الكريم",    en:"Holy Quran",       de:"Der Heilige Koran",   icon:"Q"},
   {id:"hadiths", ar:"الاحاديث النبوية",  en:"Hadiths",          de:"Hadithe",             icon:"H"},
   {id:"prayertimes", ar:"مواعيد الصلاة", en:"Prayer Times",    de:"Gebetszeiten",        icon:"T"},
 ];

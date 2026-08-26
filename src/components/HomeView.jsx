@@ -4,8 +4,9 @@ import { GOLD, screenStyle, t } from "../theme";
 import AdhkarGrid from "./AdhkarGrid";
 import HadithsSection from "./HadithsSection";
 import PrayerTimes from "./PrayerTimes";
+import QuranSection from "./quran/QuranSection";
 
-export default function HomeView({ lang, setLang, section, setSection, done, onOpenSettings, onSelectAdhkarCategory, hadithsProps, prayerTimesProps }) {
+export default function HomeView({ lang, setLang, section, setSection, done, onOpenSettings, onSelectAdhkarCategory, hadithsProps, prayerTimesProps, quranProps }) {
   return (
     <div style={Object.assign({}, screenStyle, { paddingBottom: 80 })}>
       <div style={{ padding: "12px 16px", background: "rgba(250,247,240,0.98)", borderBottom: "1px solid rgba(139,105,20,0.25)", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100, overflow: "hidden" }}>
@@ -27,7 +28,7 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
         </button>
       </div>
 
-      <div style={{ display: "flex", gap: 8, padding: "14px 16px 0" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "14px 16px 0" }}>
         {SECTIONS.map(function (s) {
           return (
             <button
@@ -36,8 +37,7 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
                 setSection(s.id);
               }}
               style={{
-                flex: 1,
-                padding: "10px 0",
+                padding: "10px 4px",
                 background: section === s.id ? "rgba(139,105,20,0.25)" : "rgba(139,105,20,0.06)",
                 border: "1px solid " + (section === s.id ? "rgba(139,105,20,0.5)" : "rgba(139,105,20,0.1)"),
                 borderRadius: 12,
@@ -75,6 +75,7 @@ export default function HomeView({ lang, setLang, section, setSection, done, onO
         </div>
       )}
       {section === "prayertimes" && <PrayerTimes lang={lang} {...prayerTimesProps} />}
+      {section === "quran" && <QuranSection lang={lang} {...quranProps} />}
       {section === "adhkar" && <AdhkarGrid lang={lang} done={done} onSelectCategory={onSelectAdhkarCategory} />}
     </div>
   );
