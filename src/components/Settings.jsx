@@ -147,8 +147,42 @@ export default function Settings({ lang, setLang, showTr, setShowTr, remindersOn
             disabled={geolocation.status === "locating"}
             style={{ background: "rgba(139,105,20,0.12)", border: "1px solid rgba(139,105,20,0.25)", color: GOLD, borderRadius: 10, padding: "8px 16px", cursor: "pointer", fontSize: 12 }}
           >
-            {geolocation.coords ? t(lang, "تحديث الموقع", "Refresh Location", "Standort aktualisieren") : t(lang, "تفعيل الموقع", "Enable Location", "Standort aktivieren")}
+            {geolocation.status === "locating"
+              ? t(lang, "جاري تحديد الموقع...", "Locating...", "Standort wird ermittelt...")
+              : geolocation.coords
+              ? t(lang, "تحديث الموقع", "Refresh Location", "Standort aktualisieren")
+              : t(lang, "تفعيل الموقع", "Enable Location", "Standort aktivieren")}
           </button>
+          {geolocation.status === "denied" && (
+            <div style={{ fontSize: 11, color: "#a03a2c", marginTop: 8, lineHeight: 1.6 }}>
+              {t(
+                lang,
+                "تم رفض إذن الموقع. تأكد إن خدمة الموقع مفعّلة على جهازك وإن المتصفح مسموح له بالوصول للموقع، ثم أعد المحاولة.",
+                "Location permission was denied. Make sure Location Services is on and this browser is allowed to use your location, then try again.",
+                "Der Standortzugriff wurde verweigert. Bitte versuche es erneut."
+              )}
+            </div>
+          )}
+          {geolocation.status === "timeout" && (
+            <div style={{ fontSize: 11, color: "#a03a2c", marginTop: 8, lineHeight: 1.6 }}>
+              {t(lang, "استغرق تحديد الموقع وقتًا طويلًا. حاول مرة أخرى.", "Locating you took too long. Please try again.", "Die Standortermittlung hat zu lange gedauert.")}
+            </div>
+          )}
+          {geolocation.status === "unavailable" && (
+            <div style={{ fontSize: 11, color: "#a03a2c", marginTop: 8, lineHeight: 1.6 }}>
+              {t(lang, "تعذّر تحديد الموقع حاليًا. تأكد إن خدمة الموقع مفعّلة وحاول مرة أخرى.", "Your location couldn't be determined. Make sure Location Services is enabled and try again.", "Dein Standort konnte nicht ermittelt werden.")}
+            </div>
+          )}
+          {geolocation.status === "insecure" && (
+            <div style={{ fontSize: 11, color: "#a03a2c", marginTop: 8, lineHeight: 1.6 }}>
+              {t(lang, "تحديد الموقع يعمل فقط عبر https.", "Location only works over https.", "Standortbestimmung funktioniert nur über https.")}
+            </div>
+          )}
+          {geolocation.status === "unsupported" && (
+            <div style={{ fontSize: 11, color: "#a03a2c", marginTop: 8 }}>
+              {t(lang, "متصفحك لا يدعم تحديد الموقع.", "Your browser doesn't support geolocation.", "Dein Browser unterstützt keine Standortermittlung.")}
+            </div>
+          )}
         </div>
       </div>
     </div>
