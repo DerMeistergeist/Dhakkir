@@ -172,6 +172,7 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
 
       <div style={{ padding: fullscreen ? "16px 14px 100px" : "16px" }} data-testid="mushaf-swipe-area" {...swipeHandlers}>
         <div
+          data-testid="mushaf-page-card"
           style={{
             background: "rgba(255,252,245,0.92)",
             border: "1px solid rgba(139,105,20,0.25)",
@@ -183,12 +184,24 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
             color: "#2c1810",
             lineHeight: 2.3,
             direction: "rtl",
-            // Not "justify": web justification stretches inter-word spacing
-            // (no kashida/letter-elongation support), which on a narrow
-            // mobile column with few words per line produced ugly, uneven
-            // gaps -- verified visually. Right-aligned flowing text reads
-            // far better here.
-            textAlign: "right",
+            // Justified so every wrapped line reaches both edges evenly,
+            // like a printed Mushaf (requested by a real user, with a
+            // reference screenshot). Safari/WebKit (CoreText) -- what iOS,
+            // the platform in that reference screenshot, actually renders
+            // with -- justifies Arabic script natively via kashida
+            // (letter-elongation), same as native Quran apps, so plain
+            // `justify` alone already gets the requested look there.
+            // Chromium/Android only stretches inter-word spacing for
+            // justify (no kashida support), which is less elegant on a
+            // line with very few words -- tried CSS's `text-justify:
+            // inter-character` as a Chromium-only improvement, but this
+            // Blink build silently ignores that property/value entirely
+            // (confirmed: never lands in the computed style), so it isn't
+            // a real fix, and true kashida rendering needs page-specific
+            // glyph fonts out of scope here (see TODO.md) -- left as
+            // plain `justify`, which is still strictly better than
+            // right-aligned ragged lines on every platform.
+            textAlign: "justify",
           }}
         >
           {blocks.map(function (block, i) {
