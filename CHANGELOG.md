@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed — Quran pages: justified text like a printed Mushaf
+- **Reported by a real user, with a reference screenshot from another Quran app.** Mushaf page text (`MushafPage.jsx`) is now `text-align: justify` instead of right-aligned, so wrapped lines reach both edges evenly like a printed Mushaf, matching the reference. On Safari/WebKit (what the reference screenshot's iOS device actually renders with) this already justifies Arabic script properly via CoreText's native kashida (letter-elongation) support, the same technique real Quran apps use. On Chromium/Android, `justify` only stretches inter-word spacing (no kashida support in Blink) — tried `text-justify: inter-character` as a Chromium-specific improvement, but confirmed it's silently ignored by this engine (never lands in the computed style), so it wasn't a real fix and was dropped; true kashida rendering everywhere would need page-specific glyph fonts, already a documented, deliberate limitation (see TODO.md).
+
 ### Changed — Home screen header logo now matches the app's actual logo
 - **Reported by the app owner, with the real logo as a reference image.** Clarified after an initial miss: the intended target was the small logo at the top of the *home screen* (not the splash screen, which is back to how it looked before). The app's own 16-point rosette (the same shape already used for the app icon, the tap counter, and every `OrnateCard` corner — reused rather than inventing a new star, for visual consistency) now sits as a soft, blurred glow directly *behind* "ذكّر"/"DHAKKIR" in the home header, with the wordmark centered exactly on top of it — matching the reference logo's composition. Previously this header had a faint, barely-visible star centered on the whole header row (including the settings button), not on the word itself.
 
