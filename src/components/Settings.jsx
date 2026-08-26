@@ -73,6 +73,23 @@ export default function Settings({ lang, setLang, showTr, setShowTr, remindersOn
             </div>
           );
         })}
+        {notificationsSupported && remindersOn && (
+          <div style={{ fontSize: 11, color: "#9a8878", marginTop: -6, marginBottom: 14, lineHeight: 1.6 }}>
+            {geolocation.coords
+              ? t(
+                  lang,
+                  "مواعيد اذكار الصباح والمساء والنوم والاستيقاظ تتبع الآن الفجر والعصر والعشاء والشروق الحقيقية لموقعك. مواعيد الصلاة الخمس مفعّلة أيضًا.",
+                  "Morning/Evening/Sleep/Waking adhkar reminders now follow your location's real sunrise/Asr/Isha/Fajr times. The five daily prayer reminders are on too.",
+                  "Adhkar-Erinnerungen folgen jetzt den echten Gebetszeiten deines Standorts."
+                )
+              : t(
+                  lang,
+                  "اذكار الصباح والمساء والنوم والاستيقاظ تستخدم أوقاتًا افتراضية ثابتة حاليًا. فعّل الموقع الجغرافي أدناه لتتبع مواقيت الفجر والشروق والعصر والعشاء الحقيقية لمكانك.",
+                  "Morning/Evening/Sleep/Waking adhkar reminders currently use fixed default times. Enable location below to follow your area's real Fajr/sunrise/Asr/Isha times.",
+                  "Adhkar-Erinnerungen nutzen aktuell feste Standardzeiten. Aktiviere den Standort unten für echte Gebetszeiten."
+                )}
+          </div>
+        )}
         {notificationsSupported && remindersOn && typeof Notification !== "undefined" && Notification.permission === "denied" && (
           <div style={{ fontSize: 12, color: "#a03a2c", marginTop: 8, lineHeight: 1.6 }}>
             {t(

@@ -66,7 +66,13 @@ export default function useReminders(enabled, lang, prayerTimes) {
       var current = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
 
       CATEGORIES.forEach(function (cat) {
-        if (!cat.time || cat.time !== current) return;
+        // Prefer the real astronomical anchor (sunrise/asr/isha/fajr) for
+        // this category's reminder when we have today's computed prayer
+        // times for the user's location; otherwise fall back to the fixed
+        // default clock time so reminders still work without location.
+        var anchorTime = cat.timeAnchor && prayerTimes && prayerTimes[cat.timeAnchor];
+        var target = anchorTime ? String(anchorTime.getHours()).padStart(2, "0") + ":" + String(anchorTime.getMinutes()).padStart(2, "0") : cat.time;
+        if (!target || target !== current) return;
         var title = lang === "ar" ? cat.ar : lang === "de" ? cat.de || cat.en : cat.en;
         notify(cat.id, "ذكّر", title);
       });

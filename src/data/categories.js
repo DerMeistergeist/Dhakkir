@@ -20,13 +20,19 @@ export var HADITH_CATS = [
   {id:"sadaqa",  ar:"الإنفاق والصدقات", en:"Charity & Giving", de:"Wohltätigkeit",      icon:"~"},
 ];
 
-// `time` (HH:MM, 24h local time) is an optional suggested reminder time
-// used by the in-app reminder scheduler (see src/hooks/useReminders.js).
+// `time` (HH:MM, 24h local time) is a fixed fallback reminder time used by
+// the in-app reminder scheduler (see src/hooks/useReminders.js) when the
+// user hasn't granted location access. `timeAnchor` names a prayer-time
+// key (see src/utils/prayerTimes.js's PRAYER_ORDER) that the reminder
+// should follow instead, once real astronomically-computed prayer times
+// are available for the user's location -- e.g. "morning" adhkar are
+// reminded at sunrise (the traditional end of their time window) rather
+// than a fixed clock time that drifts from the real sunrise all year.
 export var CATEGORIES = [
-  {id:"morning",     ar:"اذكار الصباح",       en:"Morning",        de:"Morgengebete",   icon:"S", time:"05:00"},
-  {id:"evening",     ar:"اذكار المساء",       en:"Evening",        de:"Abendgebete",    icon:"E", time:"17:00"},
-  {id:"sleep",       ar:"اذكار النوم",         en:"Sleep",          de:"Schlafgebete",   icon:"M", time:"21:00"},
-  {id:"wakeup",      ar:"اذكار الاستيقاظ",    en:"Waking Up",      de:"Aufwachen",      icon:"S", time:"06:00"},
+  {id:"morning",     ar:"اذكار الصباح",       en:"Morning",        de:"Morgengebete",   icon:"S", time:"05:00", timeAnchor:"sunrise"},
+  {id:"evening",     ar:"اذكار المساء",       en:"Evening",        de:"Abendgebete",    icon:"E", time:"17:00", timeAnchor:"asr"},
+  {id:"sleep",       ar:"اذكار النوم",         en:"Sleep",          de:"Schlafgebete",   icon:"M", time:"21:00", timeAnchor:"isha"},
+  {id:"wakeup",      ar:"اذكار الاستيقاظ",    en:"Waking Up",      de:"Aufwachen",      icon:"S", time:"06:00", timeAnchor:"fajr"},
   {id:"prayer",      ar:"اذكار الصلاة",       en:"Prayer",         de:"Gebet",          icon:"P", time:null},
   {id:"after_prayer",ar:"اذكار بعد الصلاة",   en:"After Prayer",   de:"Nach dem Gebet", icon:"A", time:null},
   {id:"wudu",        ar:"اذكار الوضوء",       en:"Wudu",           de:"Wudu",           icon:"W", time:null},
