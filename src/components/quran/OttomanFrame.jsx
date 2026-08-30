@@ -1,42 +1,54 @@
 import React from "react";
 import { GOLD } from "../../theme";
 
-// One corner's flourish, drawn once for the top-right corner and mirrored
-// via CSS transforms for the other three -- adapted from OrnateCard's
-// single-pair flourish, extended to all four corners here for a
-// traditional Ottoman-manuscript-style page border.
-var CORNER_POSITION = {
-  tr: { top: -2, right: -2, transform: "none" },
-  tl: { top: -2, left: -2, transform: "scaleX(-1)" },
-  br: { bottom: -2, right: -2, transform: "scaleY(-1)" },
-  bl: { bottom: -2, left: -2, transform: "scale(-1,-1)" },
-};
+var BAND = 20; // thickness (px) of the decorative border band
 
-function Corner({ id }) {
+// A small diamond-and-dot tile, repeated edge to edge to form a
+// continuous interlaced lattice -- a classic Ottoman/Islamic manuscript
+// border motif. It's rotationally symmetric (90°), so the exact same
+// tile image works for both the horizontal (repeat-x) and vertical
+// (repeat-y) bands with no extra rotation logic needed.
+var TILE_URL =
+  "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='28'%20height='28'%3E%3Cpath%20d='M14,1%20L27,14%20L14,27%20L1,14%20Z'%20fill='none'%20stroke='%238b6914'%20stroke-width='1.6'%20opacity='0.85'/%3E%3Ccircle%20cx='14'%20cy='14'%20r='2'%20fill='%238b6914'%20opacity='0.85'/%3E%3C/svg%3E\")";
+
+var bandStyle = { position: "absolute", backgroundImage: TILE_URL, backgroundSize: BAND + "px " + BAND + "px", backgroundPosition: "center" };
+
+// The 16-point rosette used app-wide (app icon, tap counter, OrnateCard),
+// used here small as a corner medallion -- covers the square left empty
+// where the two perpendicular bands meet, the traditional way manuscript
+// borders resolve their corners without mitering the repeating pattern.
+var ROSETTE_POINTS = "0.0,-77.8 22.8,-55.0 55.0,-55.0 55.0,-22.8 77.8,0.0 55.0,22.8 55.0,55.0 22.8,55.0 0.0,77.8 -22.8,55.0 -55.0,55.0 -55.0,22.8 -77.8,0.0 -55.0,-22.8 -55.0,-55.0 -22.8,-55.0";
+
+function CornerMedallion({ top, bottom, left, right }) {
+  var pos = { position: "absolute", width: BAND, height: BAND };
+  if (top != null) pos.top = top;
+  if (bottom != null) pos.bottom = bottom;
+  if (left != null) pos.left = left;
+  if (right != null) pos.right = right;
   return (
-    <svg style={Object.assign({ position: "absolute" }, CORNER_POSITION[id])} width="32" height="32" viewBox="0 0 50 50" fill="none" stroke={GOLD} strokeWidth="1.3" opacity="0.75" aria-hidden="true">
-      <path d="M48,2 L30,2 Q25,2 25,8 L25,15 Q25,22 18,22 L10,22 Q4,22 2,28 L2,48" />
-      <path d="M48,8 L35,8 Q30,8 30,15 L30,22 Q30,28 24,28 L15,28 Q8,28 8,35 L8,48" />
-      <circle cx="48" cy="2" r="2.4" fill={GOLD} />
-      <circle cx="25" cy="15" r="1.6" fill={GOLD} />
+    <svg style={pos} viewBox="0 0 160 160" aria-hidden="true">
+      <polygon transform="translate(80,80) scale(0.62)" fill={GOLD} opacity="0.85" points={ROSETTE_POINTS} />
     </svg>
   );
 }
 
-// A decorative double-rule border with a corner flourish in each corner,
-// wrapping the Mushaf page -- a nod to the illuminated borders found on
-// Ottoman-era Mushaf pages -- built entirely from CSS + inline SVG so it
-// doesn't need an external image asset.
+// A decorative interlaced border (repeating diamond-chain bands with a
+// small rosette medallion at each corner) wrapping the Mushaf page -- a
+// nod to the illuminated borders found on Ottoman-era Mushaf pages --
+// built entirely from CSS + inline SVG so it doesn't need an external
+// image asset.
 export default function OttomanFrame({ children, style }) {
   return (
-    <div style={Object.assign({ border: "2px solid rgba(139,105,20,0.55)", borderRadius: 16, padding: 6 }, style)}>
-      <div style={{ position: "relative", border: "1px solid rgba(139,105,20,0.4)", borderRadius: 11 }}>
-        <Corner id="tr" />
-        <Corner id="tl" />
-        <Corner id="br" />
-        <Corner id="bl" />
-        {children}
-      </div>
+    <div style={Object.assign({ position: "relative", padding: BAND, background: "rgba(139,105,20,0.06)", borderRadius: 14 }, style)}>
+      <div style={Object.assign({ top: 0, left: BAND, right: BAND, height: BAND, backgroundRepeat: "repeat-x" }, bandStyle)} />
+      <div style={Object.assign({ bottom: 0, left: BAND, right: BAND, height: BAND, backgroundRepeat: "repeat-x" }, bandStyle)} />
+      <div style={Object.assign({ top: BAND, bottom: BAND, left: 0, width: BAND, backgroundRepeat: "repeat-y" }, bandStyle)} />
+      <div style={Object.assign({ top: BAND, bottom: BAND, right: 0, width: BAND, backgroundRepeat: "repeat-y" }, bandStyle)} />
+      <CornerMedallion top={0} left={0} />
+      <CornerMedallion top={0} right={0} />
+      <CornerMedallion bottom={0} left={0} />
+      <CornerMedallion bottom={0} right={0} />
+      {children}
     </div>
   );
 }
