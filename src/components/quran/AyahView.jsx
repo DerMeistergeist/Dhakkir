@@ -2,6 +2,7 @@ import React from "react";
 import { GOLD, headerStyle, screenStyle, t } from "../../theme";
 import { toEasternDigits } from "../../utils/arabic";
 import useSwipe from "../../hooks/useSwipe";
+import AllahText from "./AllahText";
 
 // Given a {sura, ayah} pointer, returns the next/previous ayah's pointer,
 // walking across surah boundaries using each surah's totalVerses. Returns
@@ -58,7 +59,7 @@ export default function AyahView({ lang, sura, ayah, text, surahs, pageOfAyah, o
           }}
         >
           <div style={{ fontSize: 24, fontFamily: "Amiri,serif", color: "#2c1810", lineHeight: 2.1, direction: "rtl" }}>
-            {ayahText + " "}
+            <AllahText text={ayahText} />{" "}
             <span style={{ color: GOLD, fontSize: "0.7em" }}>{"(" + toEasternDigits(ayah) + ")"}</span>
           </div>
           <div style={{ marginTop: 16, fontSize: 12, color: "#9a8878" }}>
