@@ -1,15 +1,31 @@
 import React from "react";
 import { GOLD } from "../../theme";
 
-var BAND = 20; // thickness (px) of the decorative border band
+var BAND = 26; // thickness (px) of the decorative border band
 
-// A small diamond-and-dot tile, repeated edge to edge to form a
-// continuous interlaced lattice -- a classic Ottoman/Islamic manuscript
-// border motif. It's rotationally symmetric (90°), so the exact same
-// tile image works for both the horizontal (repeat-x) and vertical
-// (repeat-y) bands with no extra rotation logic needed.
-var TILE_URL =
-  "url(\"data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='28'%20height='28'%3E%3Cpath%20d='M14,1%20L27,14%20L14,27%20L1,14%20Z'%20fill='none'%20stroke='%238b6914'%20stroke-width='1.6'%20opacity='0.85'/%3E%3Ccircle%20cx='14'%20cy='14'%20r='2'%20fill='%238b6914'%20opacity='0.85'/%3E%3C/svg%3E\")";
+// A small 6-petal blossom with a leaf nub at each edge, repeated edge to
+// edge to form a continuous floral garland -- requested after a
+// reference screenshot of another Quran app's floral-vine border, kept
+// in the app's own gold palette (GOLD for the leaves/center, the same
+// secondary gold the scrollbar thumb already uses for the petals)
+// instead of that reference's green/pink. The 4-way symmetric leaf nubs
+// mean the exact same tile works for both the horizontal (repeat-x) and
+// vertical (repeat-y) bands with no extra rotation logic needed.
+var PETAL = "M16,13 Q19,7 16,4 Q13,7 16,13 Z";
+var PETAL_ANGLES = [0, 60, 120, 180, 240, 300];
+var petals = PETAL_ANGLES.map(function (deg) {
+  return "<path d='" + PETAL + "' transform='rotate(" + deg + " 16 16)' fill='#c9a84c'/>";
+}).join("");
+var TILE_SVG =
+  "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'>" +
+  petals +
+  "<circle cx='16' cy='16' r='3' fill='#8b6914'/>" +
+  "<path d='M16,4 Q18,2 16,0 Q14,2 16,4 Z' fill='#8b6914' opacity='0.8'/>" +
+  "<path d='M16,28 Q18,30 16,32 Q14,30 16,28 Z' fill='#8b6914' opacity='0.8'/>" +
+  "<path d='M4,16 Q2,18 0,16 Q2,14 4,16 Z' fill='#8b6914' opacity='0.8'/>" +
+  "<path d='M28,16 Q30,18 32,16 Q30,14 28,16 Z' fill='#8b6914' opacity='0.8'/>" +
+  "</svg>";
+var TILE_URL = "url(\"data:image/svg+xml," + encodeURIComponent(TILE_SVG) + "\")";
 
 var bandStyle = { position: "absolute", backgroundImage: TILE_URL, backgroundSize: BAND + "px " + BAND + "px", backgroundPosition: "center" };
 
@@ -32,7 +48,7 @@ function CornerMedallion({ top, bottom, left, right }) {
   );
 }
 
-// A decorative interlaced border (repeating diamond-chain bands with a
+// A decorative floral-garland border (repeating blossom bands with a
 // small rosette medallion at each corner) wrapping the Mushaf page -- a
 // nod to the illuminated borders found on Ottoman-era Mushaf pages --
 // built entirely from CSS + inline SVG so it doesn't need an external
