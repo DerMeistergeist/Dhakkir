@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { GOLD, headerStyle, screenStyle, t } from "../../theme";
 import { normalizeArabic, toEasternDigits } from "../../utils/arabic";
+import AllahText from "./AllahText";
 
 var MAX_RESULTS = 50;
 
@@ -68,7 +69,9 @@ export default function QuranSearchView({ lang, text, surahs, pageOfAyah, query,
               }}
               style={{ width: "100%", textAlign: "right", background: "rgba(255,252,245,0.9)", border: "1px solid rgba(201,168,76,0.12)", borderRadius: 14, padding: "14px 16px", marginBottom: 8, cursor: "pointer" }}
             >
-              <div style={{ fontSize: 17, fontFamily: "Amiri,serif", color: "#2c1810", lineHeight: 1.9, direction: "rtl" }}>{r.text}</div>
+              <div style={{ fontSize: 17, fontFamily: "Amiri,serif", color: "#2c1810", lineHeight: 1.9, direction: "rtl" }}>
+                <AllahText text={r.text} />
+              </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11, color: GOLD }}>
                 <span>
                   {surahName} {toEasternDigits(r.ayah)}

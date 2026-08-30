@@ -3,6 +3,8 @@ import { GOLD, headerStyle, screenStyle, t } from "../../theme";
 import { toEasternDigits } from "../../utils/arabic";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import useSwipe from "../../hooks/useSwipe";
+import AllahText from "./AllahText";
+import OttomanFrame from "./OttomanFrame";
 
 var BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
 var MIN_SCALE = 1;
@@ -175,67 +177,67 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
       )}
 
       <div style={{ padding: fullscreen ? "16px 14px 100px" : "16px" }} data-testid="mushaf-swipe-area" {...swipeHandlers}>
-        <div
-          data-testid="mushaf-page-card"
-          style={{
-            background: "rgba(255,252,245,0.92)",
-            border: "1px solid rgba(139,105,20,0.25)",
-            borderRadius: 16,
-            padding: fullscreen ? "24px 18px" : "20px 18px",
-            marginBottom: 14,
-            fontSize: baseFontSize,
-            fontFamily: "Amiri,serif",
-            color: "#2c1810",
-            lineHeight: 2.3,
-            direction: "rtl",
-            // Justified so every wrapped line reaches both edges evenly,
-            // like a printed Mushaf (requested by a real user, with a
-            // reference screenshot). Safari/WebKit (CoreText) -- what iOS,
-            // the platform in that reference screenshot, actually renders
-            // with -- justifies Arabic script natively via kashida
-            // (letter-elongation), same as native Quran apps, so plain
-            // `justify` alone already gets the requested look there.
-            // Chromium/Android only stretches inter-word spacing for
-            // justify (no kashida support), which is less elegant on a
-            // line with very few words -- tried CSS's `text-justify:
-            // inter-character` as a Chromium-only improvement, but this
-            // Blink build silently ignores that property/value entirely
-            // (confirmed: never lands in the computed style), so it isn't
-            // a real fix, and true kashida rendering needs page-specific
-            // glyph fonts out of scope here (see TODO.md) -- left as
-            // plain `justify`, which is still strictly better than
-            // right-aligned ragged lines on every platform.
-            textAlign: "justify",
-          }}
-        >
-          {blocks.map(function (block, i) {
-            if (block.type === "surahHeader") {
+        <OttomanFrame style={{ marginBottom: 14 }}>
+          <div
+            data-testid="mushaf-page-card"
+            style={{
+              background: "rgba(255,252,245,0.92)",
+              borderRadius: 11,
+              padding: fullscreen ? "24px 18px" : "20px 18px",
+              fontSize: baseFontSize,
+              fontFamily: "Amiri,serif",
+              color: "#2c1810",
+              lineHeight: 2.3,
+              direction: "rtl",
+              // Justified so every wrapped line reaches both edges evenly,
+              // like a printed Mushaf (requested by a real user, with a
+              // reference screenshot). Safari/WebKit (CoreText) -- what iOS,
+              // the platform in that reference screenshot, actually renders
+              // with -- justifies Arabic script natively via kashida
+              // (letter-elongation), same as native Quran apps, so plain
+              // `justify` alone already gets the requested look there.
+              // Chromium/Android only stretches inter-word spacing for
+              // justify (no kashida support), which is less elegant on a
+              // line with very few words -- tried CSS's `text-justify:
+              // inter-character` as a Chromium-only improvement, but this
+              // Blink build silently ignores that property/value entirely
+              // (confirmed: never lands in the computed style), so it isn't
+              // a real fix, and true kashida rendering needs page-specific
+              // glyph fonts out of scope here (see TODO.md) -- left as
+              // plain `justify`, which is still strictly better than
+              // right-aligned ragged lines on every platform.
+              textAlign: "justify",
+            }}
+          >
+            {blocks.map(function (block, i) {
+              if (block.type === "surahHeader") {
+                return (
+                  <div key={"h" + i} style={{ display: "block", textAlign: "center", margin: "6px 0 10px", padding: "8px 0", borderTop: i > 0 ? "1px solid rgba(139,105,20,0.2)" : "none", borderBottom: "1px solid rgba(139,105,20,0.2)" }}>
+                    <span style={{ fontSize: baseFontSize * 0.8, color: GOLD, fontWeight: 700 }}>{"❖ سورة " + block.surah.name + " ❖"}</span>
+                  </div>
+                );
+              }
+              if (block.type === "bismillah") {
+                return (
+                  <div key={"b" + i} style={{ display: "block", textAlign: "center", fontSize: baseFontSize * 0.9, color: GOLD, margin: "0 0 10px" }}>
+                    <AllahText text={BISMILLAH} />
+                  </div>
+                );
+              }
+              var isHighlighted = highlightAyah && highlightAyah.sura === block.sura && highlightAyah.ayah === block.ayah;
               return (
-                <div key={"h" + i} style={{ display: "block", textAlign: "center", margin: "6px 0 10px", padding: "8px 0", borderTop: i > 0 ? "1px solid rgba(139,105,20,0.2)" : "none", borderBottom: "1px solid rgba(139,105,20,0.2)" }}>
-                  <span style={{ fontSize: baseFontSize * 0.8, color: GOLD, fontWeight: 700 }}>{"❖ سورة " + block.surah.name + " ❖"}</span>
-                </div>
+                <span key={block.sura + "-" + block.ayah} style={isHighlighted ? { background: "rgba(201,168,76,0.28)", borderRadius: 4 } : undefined}>
+                  <AllahText text={block.text} />{" "}
+                  {/* Plain parentheses, not the ornate ﴿﴾ Quranic marks: the
+                      latter render as the same glyph on both sides (no visual
+                      open/close distinction) in this font, verified directly
+                      -- plain "(" ")" render correctly and reliably instead. */}
+                  <span style={{ color: GOLD, fontSize: "0.7em" }}>{"(" + toEasternDigits(block.ayah) + ")"}</span>{" "}
+                </span>
               );
-            }
-            if (block.type === "bismillah") {
-              return (
-                <div key={"b" + i} style={{ display: "block", textAlign: "center", fontSize: baseFontSize * 0.9, color: GOLD, margin: "0 0 10px" }}>
-                  {BISMILLAH}
-                </div>
-              );
-            }
-            var isHighlighted = highlightAyah && highlightAyah.sura === block.sura && highlightAyah.ayah === block.ayah;
-            return (
-              <span key={block.sura + "-" + block.ayah} style={isHighlighted ? { background: "rgba(201,168,76,0.28)", borderRadius: 4 } : undefined}>
-                {block.text + " "}
-                {/* Plain parentheses, not the ornate ﴿﴾ Quranic marks: the
-                    latter render as the same glyph on both sides (no visual
-                    open/close distinction) in this font, verified directly
-                    -- plain "(" ")" render correctly and reliably instead. */}
-                <span style={{ color: GOLD, fontSize: "0.7em" }}>{"(" + toEasternDigits(block.ayah) + ")"}</span>{" "}
-              </span>
-            );
-          })}
-        </div>
+            })}
+          </div>
+        </OttomanFrame>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button aria-label={t(lang, "الصفحة السابقة", "Previous page", "Vorherige Seite")} onClick={onPrev} disabled={pageNumber <= 1} style={{ background: "rgba(139,105,20,0.1)", border: "none", borderRadius: 10, color: pageNumber > 1 ? GOLD : "#ccc0b0", fontSize: 20, cursor: pageNumber > 1 ? "pointer" : "default", padding: "8px 20px" }}>
