@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Changed — Bigger fullscreen page-info text, brighter red for Allah's name
+- **Requested by a real user.** The surah/Juz'/Hizb line and the page-number readout in fullscreen Mushaf mode are now larger and bolder (17px, bold, up from 12-13px). `ALLAH_RED` (the color used to highlight "الله") is now a clear, bright red (`#e0201b`, was a darker `#a3231e` that read closer to maroon/brown than red against the cream page background).
+
 ### Added — Juz'/Hizb and surah shown in fullscreen Mushaf mode
 - **Requested by a real user.** Fullscreen reading mode now shows, right above the page: the current surah's name, its Juz' (١-٣٠), and its Hizb (١-٦٠) — updating live as pages turn. The page-number readout at the bottom is now a proper labeled "صفحة N / 604" in Eastern Arabic-Indic digits (it was a bare, undigit-converted Western-numeral fraction before) and more prominent in fullscreen, since that mode hides the normal header's own page-number control.
 - New data: `src/data/quran/juzHizb.js` (`PAGE_JUZ`/`PAGE_HIZB`, one entry per Mushaf page), generated from a third open-data source, `quran-meta` (MIT, Hafs riwaya) — see `scripts/build-quran-data.js` and the README's "الترخيص والمصادر" section for why only its ayah→Juz/Hizb mapping is trusted (its own page numbering doesn't always agree with `mushaf-engine`'s) and how it was validated (exhaustive structural checks plus well-known boundary spot-checks: Juz 2 at 2:142, Juz 30 "Amma" at 78:1) — see the new `juzHizb.test.js`.

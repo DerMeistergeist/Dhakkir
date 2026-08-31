@@ -4,10 +4,11 @@ export var BG = "#f5f0e8";
 export var GOLD = "#8b6914";
 export var TEXT = "#2c1810";
 export var CARD = "rgba(139,105,20,0.06)";
-// Used to highlight Lafẓ al-Jalālah ("الله") in Quran text -- a deep,
-// classic manuscript red rather than a bright/alarming one, since it
-// sits inside body text the reader is meant to keep reading smoothly.
-export var ALLAH_RED = "#a3231e";
+// Used to highlight Lafẓ al-Jalālah ("الله") in Quran text -- a clear,
+// bright red that reads unmistakably as "red" against the cream page
+// background (a real user found the original, darker/more maroon tone
+// too muted to stand out at a glance).
+export var ALLAH_RED = "#e0201b";
 
 export var FONTS = { amiri: "Amiri,serif", sans: "Arial,sans-serif" };
 
