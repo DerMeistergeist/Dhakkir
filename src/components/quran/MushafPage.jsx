@@ -184,7 +184,7 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
           /hizb the current page is in -- the rest of the app's chrome
           (including the normal-mode header's surah context) is hidden. */}
       {fullscreen && (
-        <div style={{ textAlign: "center", fontSize: 12, color: GOLD, fontFamily: "Amiri,serif", padding: "8px 14px 0", direction: "rtl" }}>
+        <div style={{ textAlign: "center", fontSize: 17, color: GOLD, fontFamily: "Amiri,serif", fontWeight: 700, padding: "8px 14px 0", direction: "rtl" }}>
           {currentSurahName}
           {" · "}
           <span style={{ direction: "ltr", unicodeBidi: "isolate" }}>{t(lang, "الجزء " + toEasternDigits(juz), "Juz " + juz, "Juz " + juz)}</span>
@@ -260,7 +260,7 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
           <button aria-label={t(lang, "الصفحة السابقة", "Previous page", "Vorherige Seite")} onClick={onPrev} disabled={pageNumber <= 1} style={{ background: "rgba(139,105,20,0.1)", border: "none", borderRadius: 10, color: pageNumber > 1 ? GOLD : "#ccc0b0", fontSize: 20, cursor: pageNumber > 1 ? "pointer" : "default", padding: "8px 20px" }}>
             {"<"}
           </button>
-          <div style={{ fontSize: fullscreen ? 13 : 11, color: fullscreen ? GOLD : "#9a8878", fontFamily: "Amiri,serif" }}>
+          <div style={{ fontSize: fullscreen ? 17 : 13, fontWeight: fullscreen ? 700 : 400, color: fullscreen ? GOLD : "#9a8878", fontFamily: "Amiri,serif" }}>
             {t(lang, "صفحة ", "Page ", "Seite ")}
             <span style={{ direction: "ltr", unicodeBidi: "isolate" }}>
               {toEasternDigits(pageNumber)} / {toEasternDigits(totalPages)}
