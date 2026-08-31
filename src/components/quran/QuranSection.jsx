@@ -81,6 +81,8 @@ export default function QuranSection({ lang, lastPage, setLastPage, onOpenSettin
         ayahs={data.PAGES[currentPage - 1]}
         text={data.TEXT}
         surahs={data.SURAHS}
+        juz={data.PAGE_JUZ[currentPage - 1]}
+        hizb={data.PAGE_HIZB[currentPage - 1]}
         highlightAyah={highlightAyah}
         onFullscreenChange={onFullscreenChange}
         onPrev={function () {

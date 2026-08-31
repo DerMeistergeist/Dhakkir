@@ -54,9 +54,9 @@ export default function SurahIndex({ lang, surahs, lastPage, onOpenSurah, onCont
       <div style={{ textAlign: "center", fontSize: 10, color: "#c0b4a4", marginTop: 16, lineHeight: 1.7 }}>
         {t(
           lang,
-          "نص القرآن: مشروع quran-json (رخصة CC-BY-4.0) · تخطيط صفحات المصحف: مشروع mushaf-engine (رخصة MIT)",
-          "Quran text: the quran-json project (CC-BY-4.0 license) · Mushaf page layout: the mushaf-engine project (MIT license)",
-          "Korantext: quran-json-Projekt (CC-BY-4.0) · Mushaf-Seitenlayout: mushaf-engine-Projekt (MIT)"
+          "نص القرآن: مشروع quran-json (رخصة CC-BY-4.0) · تخطيط صفحات المصحف: مشروع mushaf-engine (رخصة MIT) · الجزء والحزب: مشروع quran-meta (رخصة MIT)",
+          "Quran text: the quran-json project (CC-BY-4.0 license) · Mushaf page layout: the mushaf-engine project (MIT license) · Juz'/Hizb data: the quran-meta project (MIT license)",
+          "Korantext: quran-json-Projekt (CC-BY-4.0) · Mushaf-Seitenlayout: mushaf-engine-Projekt (MIT) · Juz'/Hizb-Daten: quran-meta-Projekt (MIT)"
         )}
       </div>
     </div>

@@ -10,7 +10,7 @@ var BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّ
 var MIN_SCALE = 1;
 var MAX_SCALE = 2;
 
-export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, surahs, onPrev, onNext, onGoToPage, onBack, onOpenSettings, highlightAyah, onFullscreenChange }) {
+export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, surahs, juz, hizb, onPrev, onNext, onGoToPage, onBack, onOpenSettings, highlightAyah, onFullscreenChange }) {
   const [jumpOpen, setJumpOpen] = useState(false);
   const [jumpValue, setJumpValue] = useState("");
   const [fullscreen, setFullscreenState] = useState(false);
@@ -84,6 +84,10 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
   }
 
   var baseFontSize = 21 * fontScale;
+  // The surah shown at the very top of this page (a page can open mid-surah
+  // or, on a transition page, right where a new one starts -- either way
+  // this is the one whose text the reader's eye lands on first).
+  var currentSurahName = surahs[ayahs[0][0] - 1].name;
 
   return (
     <div style={Object.assign({}, screenStyle, { paddingBottom: fullscreen ? 0 : 80 })} className="fin">
@@ -176,6 +180,19 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
         </div>
       )}
 
+      {/* In fullscreen mode this is the only place showing which surah/juz'
+          /hizb the current page is in -- the rest of the app's chrome
+          (including the normal-mode header's surah context) is hidden. */}
+      {fullscreen && (
+        <div style={{ textAlign: "center", fontSize: 12, color: GOLD, fontFamily: "Amiri,serif", padding: "8px 14px 0", direction: "rtl" }}>
+          {currentSurahName}
+          {" · "}
+          <span style={{ direction: "ltr", unicodeBidi: "isolate" }}>{t(lang, "الجزء " + toEasternDigits(juz), "Juz " + juz, "Juz " + juz)}</span>
+          {" · "}
+          <span style={{ direction: "ltr", unicodeBidi: "isolate" }}>{t(lang, "الحزب " + toEasternDigits(hizb), "Hizb " + hizb, "Hizb " + hizb)}</span>
+        </div>
+      )}
+
       <div style={{ padding: fullscreen ? "16px 14px 100px" : "16px" }} data-testid="mushaf-swipe-area" {...swipeHandlers}>
         <OttomanFrame style={{ marginBottom: 14 }}>
           <div
@@ -243,8 +260,11 @@ export default function MushafPage({ lang, pageNumber, totalPages, ayahs, text, 
           <button aria-label={t(lang, "الصفحة السابقة", "Previous page", "Vorherige Seite")} onClick={onPrev} disabled={pageNumber <= 1} style={{ background: "rgba(139,105,20,0.1)", border: "none", borderRadius: 10, color: pageNumber > 1 ? GOLD : "#ccc0b0", fontSize: 20, cursor: pageNumber > 1 ? "pointer" : "default", padding: "8px 20px" }}>
             {"<"}
           </button>
-          <div style={{ fontSize: 11, color: "#9a8878", direction: "ltr", unicodeBidi: "isolate" }}>
-            {pageNumber} / {totalPages}
+          <div style={{ fontSize: fullscreen ? 13 : 11, color: fullscreen ? GOLD : "#9a8878", fontFamily: "Amiri,serif" }}>
+            {t(lang, "صفحة ", "Page ", "Seite ")}
+            <span style={{ direction: "ltr", unicodeBidi: "isolate" }}>
+              {toEasternDigits(pageNumber)} / {toEasternDigits(totalPages)}
+            </span>
           </div>
           <button aria-label={t(lang, "الصفحة التالية", "Next page", "Nächste Seite")} onClick={onNext} disabled={pageNumber >= totalPages} style={{ background: "rgba(139,105,20,0.1)", border: "none", borderRadius: 10, color: pageNumber < totalPages ? GOLD : "#ccc0b0", fontSize: 20, cursor: pageNumber < totalPages ? "pointer" : "default", padding: "8px 20px" }}>
             {">"}

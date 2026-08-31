@@ -16,7 +16,7 @@ export default function useQuranData() {
       return;
     }
     if (!pending) {
-      pending = Promise.all([import("../data/quran/pages"), import("../data/quran/text"), import("../data/quran/surahs")]).then(function (mods) {
+      pending = Promise.all([import("../data/quran/pages"), import("../data/quran/text"), import("../data/quran/surahs"), import("../data/quran/juzHizb")]).then(function (mods) {
         var PAGES = mods[0].PAGES;
         // Reverse index: "sura:ayah" -> 1-indexed page number, used by
         // search results and any future "jump to this ayah" action.
@@ -26,7 +26,7 @@ export default function useQuranData() {
             pageOfAyah[entry[0] + ":" + entry[1]] = i + 1;
           });
         });
-        cached = { PAGES: PAGES, TEXT: mods[1].TEXT, SURAHS: mods[2].SURAHS, pageOfAyah: pageOfAyah };
+        cached = { PAGES: PAGES, TEXT: mods[1].TEXT, SURAHS: mods[2].SURAHS, PAGE_JUZ: mods[3].PAGE_JUZ, PAGE_HIZB: mods[3].PAGE_HIZB, pageOfAyah: pageOfAyah };
         return cached;
       });
     }
