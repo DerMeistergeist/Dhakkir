@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added — Juz'/Hizb and surah shown in fullscreen Mushaf mode
+- **Requested by a real user.** Fullscreen reading mode now shows, right above the page: the current surah's name, its Juz' (١-٣٠), and its Hizb (١-٦٠) — updating live as pages turn. The page-number readout at the bottom is now a proper labeled "صفحة N / 604" in Eastern Arabic-Indic digits (it was a bare, undigit-converted Western-numeral fraction before) and more prominent in fullscreen, since that mode hides the normal header's own page-number control.
+- New data: `src/data/quran/juzHizb.js` (`PAGE_JUZ`/`PAGE_HIZB`, one entry per Mushaf page), generated from a third open-data source, `quran-meta` (MIT, Hafs riwaya) — see `scripts/build-quran-data.js` and the README's "الترخيص والمصادر" section for why only its ayah→Juz/Hizb mapping is trusted (its own page numbering doesn't always agree with `mushaf-engine`'s) and how it was validated (exhaustive structural checks plus well-known boundary spot-checks: Juz 2 at 2:142, Juz 30 "Amma" at 78:1) — see the new `juzHizb.test.js`.
+
 ### Changed — Mushaf page frame redesigned as a floral garland
 - **Iterated twice on real user feedback.** The border around the Mushaf page (`OttomanFrame.jsx`) didn't land on the first try — replaced its single flourish-per-corner design with a repeating diamond-lattice band, which also wasn't it; landed on a repeating 6-petal floral-garland band (after a reference screenshot of another Quran app's floral-vine border), kept in the app's own existing gold tones (`GOLD` for the leaves/center, the same secondary gold `#c9a84c` the scrollbar thumb already uses for the petals) rather than that reference's green/pink, with a small rosette medallion still capping each corner.
 

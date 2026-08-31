@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// One-time build script: turns two open-data npm packages into the compact
+// One-time build script: turns three open-data npm packages into the compact
 // static JSON this app ships under src/data/quran/. Re-run this after
-// `npm install --no-save @sahabaplus/mushaf-engine quran-json` if the data
-// ever needs regenerating (e.g. to pick up a source update).
+// `npm install --no-save @sahabaplus/mushaf-engine quran-json quran-meta` if
+// the data ever needs regenerating (e.g. to pick up a source update).
 //
 // Sources:
 //  - @sahabaplus/mushaf-engine (MIT) -- data/king_fahad_mushaf.json:
@@ -12,11 +12,22 @@
 //    the Arabic Uthmani-style verse text and surah metadata. Only the
 //    Arabic text and surah names are kept; translations/transliteration
 //    are dropped (this app displays Arabic only).
+//  - quran-meta (MIT, Hafs riwaya) -- ayah -> Juz'/Hizb metadata. Its own
+//    internal page numbering does NOT always agree with mushaf-engine's
+//    (56 of 6236 ayahs land on a different page number between the two --
+//    an off-by-one in a handful of localized spots, likely from a slightly
+//    different source edition's line-wrapping), so this script never uses
+//    quran-meta's page field; only its ayah->Juz/Hizb mapping, which is a
+//    fixed, edition-independent fact (every Mushaf agrees on which ayah
+//    starts each Juz/Hizb) and was spot-checked against well-known
+//    boundaries (Juz 2 at 2:142, Juz 30 "Amma" at 78:1) before trusting it.
 //
 // Output (all under src/data/quran/):
 //  - pages.js   : PAGES[i] (i = page-1) = [[sura, ayah], ...] for that page
 //  - text.js    : TEXT[sura-1] = [ayahText, ...] (0-indexed by ayah-1)
 //  - surahs.js  : SURAHS[i] = { id, name, transliteration, type, totalVerses, startPage }
+//  - juzHizb.js : PAGE_JUZ[i]/PAGE_HIZB[i] = the Juz' (1-30) / Hizb (1-60)
+//                 that page i+1's first ayah belongs to
 
 const fs = require("fs");
 const path = require("path");
@@ -35,7 +46,11 @@ function license(sourceLine) {
   );
 }
 
-function main() {
+async function main() {
+  // quran-meta ships ESM-only, so it needs a dynamic import() even from
+  // this CommonJS script.
+  const { getAyahMeta, findAyahIdBySurah } = await import("quran-meta/hafs");
+
   const mushafPages = JSON.parse(fs.readFileSync(MUSHAF_ENGINE, "utf8"));
   if (mushafPages.length !== 604) {
     throw new Error("expected 604 Mushaf pages, got " + mushafPages.length);
@@ -113,7 +128,45 @@ function main() {
       ";\n"
   );
 
+  // Juz'/Hizb of each page's first ayah (see the module-header note on why
+  // only quran-meta's ayah->Juz/Hizb mapping is used, never its own page
+  // numbers). Sanity-checked against the well-known juz/hizb structure --
+  // every Juz boundary must also be a Hizb boundary, Hizb numbers must run
+  // 1..60 without gaps, and Juz 1/2/30 must start where universally known.
+  const pageJuz = [];
+  const pageHizb = [];
+  pages.forEach((page) => {
+    const [sura, ayah] = page[0];
+    const m = getAyahMeta(findAyahIdBySurah(sura, ayah));
+    pageJuz.push(m.juz);
+    pageHizb.push(m.hizbId);
+  });
+  if (pageJuz[0] !== 1) throw new Error("page 1 should be Juz 1, got " + pageJuz[0]);
+  if (pageJuz[pages.length - 1] !== 30) throw new Error("last page should be Juz 30, got " + pageJuz[pages.length - 1]);
+  {
+    const juz2Meta = getAyahMeta(findAyahIdBySurah(2, 142));
+    if (juz2Meta.juz !== 2) throw new Error("2:142 should start Juz 2 (well-known boundary), got Juz " + juz2Meta.juz);
+    const juz30Meta = getAyahMeta(findAyahIdBySurah(78, 1));
+    if (juz30Meta.juz !== 30) throw new Error("78:1 (An-Naba) should start Juz 30 'Amma' (well-known boundary), got Juz " + juz30Meta.juz);
+  }
+
+  fs.writeFileSync(
+    path.join(OUT_DIR, "juzHizb.js"),
+    license("quran-meta (MIT, Hafs riwaya) -- ayah->Juz'/Hizb metadata, adapted") +
+      "// PAGE_JUZ[i]/PAGE_HIZB[i] = the Juz' (1-30) / Hizb (1-60) that page\n" +
+      "// i+1's first ayah belongs to.\n" +
+      "export var PAGE_JUZ = " +
+      JSON.stringify(pageJuz) +
+      ";\n" +
+      "export var PAGE_HIZB = " +
+      JSON.stringify(pageHizb) +
+      ";\n"
+  );
+
   console.log("Wrote", pages.length, "pages,", totalAyahs, "ayahs,", surahs.length, "surahs to", OUT_DIR);
 }
 
-main();
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
